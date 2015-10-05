@@ -40,7 +40,7 @@
 </script>
 <body>
 
-  <body onload = "getGeolocation()" >
+  <body>
     <div id="perspective" class="perspective effect-movedown">
       <div class="container">
         <div class="wrapper"><!-- wrapper needed for scroll -->
@@ -51,70 +51,59 @@
               <span>nav</span></a></span>
           </div>
           <header class="codrops-header">
-            <h1>Tracking Current Rate  <span> 通过调用xignite XigniteGlobalCurrencies api实现汇率信息在网页上的动态显示</span></h1> 
+            <h1>Get Real time Rate  <span> 通过调用xignite XigniteGlobalCurrencies api实现汇率信息在网页上的动态显示</span></h1> 
           </header>
           <div class="main clearfix">
             <div class="column">
               <p><button id="showMenu">Navigator</button></p>
-              <p>Click here to navigate</p>
+              <p>Search</p>
               
               <form id="ques1" action="/1" method="post" name="bbb">
-                <h4>Topic:</h4>
-                <input id="1a1" type ="text" name ="promise">
-                <h3>Local geocode:</h3>
-                <input id="1a2" type ="text" name="geo" disabled>
-                <script>
-
-                  function getGeolocation(){
-                    if (navigator.geolocation) {
-                             navigator.geolocation.watchPosition(setGeolocation);
-                        } else { 
-                            x.innerHTML = "Geolocation is not supported by this browser.";}
-                            return false;
-                    }
-                  function setGeolocation(position){
-                      //alert( position.coords.latitude+" "+position.coords.longitude);
-                      var lat =  position.coords.latitude;
-                      var lng = position.coords.longitude;
-                      document.getElementById("1a2").value =lat.toFixed(3)+","+lng.toFixed(3);
-                  }
-                    
-                </script>
-                <br>
-                <input type ="submit" value="Query" onclick="return filter1();">
+                <h4>选择token：</h4>
+                <select name="token">
+                  <option value="B1A025CDCEC9481A8217AD212A4D6068">B1A025CDCEC9481A8217AD212A4D6068</option>
+                  <option value="D4F701AED496461AB6B7E08F021E9557">D4F701AED496461AB6B7E08F021E9557</option>
+                  <option value="0D3DA764DF454E38943049C8B967B5A3">0D3DA764DF454E38943049C8B967B5A3</option>
+                </select>
+                <h4>货币:</h4>
+                <!-- <input id="1a1" type ="text" name ="promise"> -->
+                
+                <select name="money1">
+                  <option value="volvo">USD</option>
+                  <option value="saab">GBP</option>
+                  <option value="fiat">RMB</option>
+                  <option value="audi">HKB</option>
+                </select>
+                <select name="money2">
+                  <option value="volvo">USD</option>
+                  <option value="saab">GBP</option>
+                  <option value="fiat">RMB</option>
+                  <option value="audi">HKB</option>
+                </select>
+                <tr>
+                <input type ="submit" value="Modify" onclick="return filter1();">
               </form>
 
             </div>
             <div class="column">
               <nav class="codrops-demos">
+                <h1>Returned Results</h1>
                 <div id="table-scroll">
                 <table>
                   <thead>
-                  <tr><th>Date</th><th> User</td> <th> content</th><th>view</th></tr>
+                  <tr><th>BaseCurrency</th><th> QuoteCurrency</th><th>Date</th><th>Time</th><th>Bid</th><th>Mid</th><th>Ask</th></tr>
+                  <tr><td><%= items[0].result %></td></tr>
                   </thead>
                   <tbody>
-                    <% for (var i=1;i<items.length;i++){ %>
-                    <tr><td><%= items[i].date %></td><td><%= items[i].author %></td><td><%= items[i].content %></td><td><a href='/Retweets/<%=items[i].id %>'>check retweeters</a></td></tr>
-                    <%}%>
+  
                   </tbody>
                 </table>
               </div>
-              <div id="table-scroll">
-                <table>
-                  <thead>
-                    <tr><th>img</th><th>user name</th></tr>
-                  </thead>
-                  <tbody>
-                    <% for (var i=1;i<users.length;i++){ %>
-                    <tr><td><img src='<%=users[i].profile %>'></img></td><td><%= users[i].name %></td></tr>
-                    <%}%>
-                  </tbody>
-                </table>
-              </div>
+              
               </nav>
             </div>
             <div class="related">
-              <p>All rights reserved by Pengyuan Zhao, Likang Cao, Shangshu Lu</p>
+              <p>All rights reserved by Shangshu Lu</p>
               <p><a href="#">Contact us</a></p>
               
             </div>
@@ -122,11 +111,10 @@
         </div><!-- wrapper -->
       </div><!-- /container -->
       <nav class="outer-nav top horizontal">
-        <a href="/" class="icon-home">Question1</a>
-        <a href="/2a" class="icon-news">Question2A</a>
-        <a href="/2b" class="icon-image">Question2B</a>
-        <a href="/2c" class="icon-upload">Question2C</a>
-        <a href="/history" class="icon-star">Search History</a>
+        <a href="/" class="icon-home">Sample1</a>
+        <a href="/2a" class="icon-news">Sample2</a>
+        <a href="/2b" class="icon-image">Sample3</a>
+        <a href="/2c" class="icon-upload">Sample4</a>
         
       </nav>
     </div><!-- /perspective -->
