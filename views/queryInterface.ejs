@@ -5,20 +5,22 @@
     <meta name="description" content="">
   	<meta name="author" content="">
   	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	<link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
   	<link rel="stylesheet" href="/stylesheets/normalize.css">
   	<!-- <link rel="stylesheet" href="/stylesheets/skeleton.css"> -->
   	<link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/demo.css" />
     <link rel="stylesheet" type="text/css" href="/stylesheets/component.css" />
-    <script src="/javascripts/modernizr.custom.25376.js"></script>
+    <script type="/javascripts/streamdataio-auth.min.js"></script>
+    <script type="/javascripts/streamdataio.min.js"></script>
+    <script src="/javascripts/main.js"></script>
   	<script data-require="jquery@2.1.1" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script data-require="traceur@*" data-semver="0.0.0-20140302" src="https://traceur-compiler.googlecode.com/git/bin/traceur.js"></script>
-    <script data-require="traceur@*" data-semver="0.0.0-20140302" src="https://traceur-compiler.googlecode.com/git/src/bootstrap.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-json-patch/0.5.1/json-patch-duplex.min.js" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js"></script>
     <title>Query Interface</title>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js"></script>
+
 </head>
 <script>
 
@@ -57,10 +59,15 @@
             <div class="column">
               <p><button id="showMenu">Navigator</button></p>
               <p>Search</p>
-              
+               <div class="form-group">
+                    <label for="inputUrl" class="col-sm-3 control-label">URL</label>
+                    <div class="col-sm-8">
+                        <input id="inputUrl" class="form-control" placeholder="Your JSON API Url" type="url" value="http://demo-streamdataio.rhcloud.com/stockmarket/prices" required>
+                    </div>
+                </div>
               <form id="ques1" action="/1" method="post" name="bbb">
                 <h4>选择token：</h4>
-                <select name="token">
+                <select name="token" id="inputToken">
                   <option value="B1A025CDCEC9481A8217AD212A4D6068">B1A025CDCEC9481A8217AD212A4D6068</option>
                   <option value="D4F701AED496461AB6B7E08F021E9557">D4F701AED496461AB6B7E08F021E9557</option>
                   <option value="0D3DA764DF454E38943049C8B967B5A3">0D3DA764DF454E38943049C8B967B5A3</option>
@@ -69,16 +76,16 @@
                 <!-- <input id="1a1" type ="text" name ="promise"> -->
                 
                 <select name="money1">
-                  <option value="volvo">USD</option>
-                  <option value="saab">GBP</option>
-                  <option value="fiat">RMB</option>
-                  <option value="audi">HKB</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                  <option value="RMB">RMB</option>
+                  <option value="HKB">HKB</option>
                 </select>
                 <select name="money2">
-                  <option value="volvo">USD</option>
-                  <option value="saab">GBP</option>
-                  <option value="fiat">RMB</option>
-                  <option value="audi">HKB</option>
+                  <option value="USD">USD</option>
+                  <option value="GBP">GBP</option>
+                  <option value="RMB">RMB</option>
+                  <option value="HKB">HKB</option>
                 </select>
                 <tr>
                 <input type ="submit" value="Modify" onclick="return filter1();">
@@ -88,11 +95,12 @@
             <div class="column">
               <nav class="codrops-demos">
                 <h1>Returned Results</h1>
+  
                 <div id="table-scroll">
                 <table>
                   <thead>
                   <tr><th>BaseCurrency</th><th> QuoteCurrency</th><th>Date</th><th>Time</th><th>Bid</th><th>Mid</th><th>Ask</th></tr>
-                  <tr><td><%= items[0].result %></td></tr>
+                  <tr><td></td></tr>
                   </thead>
                   <tbody>
   
@@ -120,5 +128,60 @@
     </div><!-- /perspective -->
     <script src="/javascripts/classie.js"></script>
     <script src="/javascripts/menu.js"></script>
+    <script src="/javascripts/streamdataio.min.js"></script>
+     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <script>
+          (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+          function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+          e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+          e.src='http://www.google-analytics.com/analytics.js';
+          r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+          ga('create','UA-XXXXX-X');ga('send','pageview');
+        </script>
+
+        <script> 
+          var eventSource = null;
+          var stocks = [];
+          window.onload = function connect() {
+            alert("page load finished"); 
+            // REPLACE WITH YOUR OWN TOKEN HERE
+            var appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
+
+            // create the StreamdataEventSource Object
+            eventSource = streamdataio.createEventSource("http://demo-streamdataio.rhcloud.com/stockmarket/prices",appToken);
+
+            eventSource
+             .onOpen(function() {
+               console.log("streamdata Event Source connected.")
+             })
+             .onData(function(data) {
+               // json object stored locally.
+               stocks = data;
+               alert(stocks);
+             })
+             .onPatch(function(patch) {
+               // use json patch library to apply the patch (patch)
+               // to the original snapshot (stocks)
+               jsonpatch.apply(stocks, patch);
+
+             })
+             .onError(function(error) {
+               // displays the error message
+               console.log(error.getMessage());
+             });
+
+            // open the data stream to the REST service through streamdata.io proxy
+            eventSource.open();
+
+          };
+        </script> 
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-json-patch/0.5.1/json-patch-duplex.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.0/underscore-min.js"></script>
+        
   </body>
 </html>
