@@ -11,6 +11,7 @@
   	<link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/demo.css" />
     <link rel="stylesheet" type="text/css" href="/stylesheets/component.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="/javascripts/streamdataio-auth.min.js"></script>
     <script type="/javascripts/streamdataio.min.js"></script>
     <script src="/javascripts/main.js"></script>
@@ -103,10 +104,13 @@
                   <tr><td></td></tr>
                   </thead>
                   <tbody>
-  
+                    <div id="ajaxTest"><h3>a</h3></div>
                   </tbody>
                 </table>
+
+               
               </div>
+
               
               </nav>
             </div>
@@ -156,14 +160,17 @@
              })
              .onData(function(data) {
                // json object stored locally.
+               console.log('Received data: ***** ' + JSON.stringify(data));
                stocks = data;
-               alert(stocks);
+               //alert(JSON.stringify(data));
+               constructDatasArray();
              })
              .onPatch(function(patch) {
                // use json patch library to apply the patch (patch)
                // to the original snapshot (stocks)
                jsonpatch.apply(stocks, patch);
-
+               console.log('Received patch:!!!!!!' + JSON.stringify(patch));
+               $("#ajaxTest").html(JSON.stringify(patch));
              })
              .onError(function(error) {
                // displays the error message
@@ -174,6 +181,12 @@
             eventSource.open();
 
           };
+          function constructDatasArray() {
+              var datasHeaders = Object.keys(datas[0]);
+              // delete areNew tags for render
+              if(datasHeaders.indexOf('areNew') != -1) datasHeaders.splice(datasHeaders.indexOf('areNew'), 1);
+              $('#datasArray').html(_.template($('#datasArrayTpl').html(),{datas: datas, datasHeaders: datasHeaders}));
+          }
         </script> 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
