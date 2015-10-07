@@ -1,21 +1,21 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
+  <meta charset="UTF-8">
     <meta name="description" content="">
-  	<meta name="author" content="">
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  	<link rel="stylesheet" href="/stylesheets/normalize.css">
-  	<!-- <link rel="stylesheet" href="/stylesheets/skeleton.css"> -->
-  	<link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/normalize.css">
+    <!-- <link rel="stylesheet" href="/stylesheets/skeleton.css"> -->
+    <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/demo.css" />
     <link rel="stylesheet" type="text/css" href="/stylesheets/component.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="/javascripts/streamdataio-auth.min.js"></script>
     <script type="/javascripts/streamdataio.min.js"></script>
     <script src="/javascripts/main.js"></script>
-  	<script data-require="jquery@2.1.1" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script data-require="jquery@2.1.1" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-json-patch/0.5.1/json-patch-duplex.min.js" />
@@ -49,7 +49,9 @@
         <div class="wrapper"><!-- wrapper needed for scroll -->
           <!-- Top Navigation -->
           <div class="codrops-top clearfix">
-            
+            <a class="codrops-icon codrops-icon-prev" href="#"><span>nav</span></a>
+            <span class="right"><a class="codrops-icon codrops-icon-drop" href="#">
+              <span>nav</span></a></span>
           </div>
           <header class="codrops-header">
             <h1>Get Real time Rate  <span> 通过调用xignite XigniteGlobalCurrencies api实现汇率信息在网页上的动态显示</span></h1> 
@@ -61,7 +63,7 @@
                <div class="form-group">
                     <label for="inputUrl" class="col-sm-3 control-label">URL</label>
                     <div class="col-sm-8">
-                        <input id="inputUrl" class="form-control" placeholder="Your JSON API Url" type="url" value="http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=EURUSD&_token=0D3DA764DF454E38943049C8B967B5A3" required>
+                        <input id="inputUrl" class="form-control" placeholder="Your JSON API Url" type="url" value="http://demo-streamdataio.rhcloud.com/stockmarket/prices" required>
                     </div>
                 </div>
               <form id="ques1" action="/1" method="post" name="bbb">
@@ -102,13 +104,13 @@
                   <tr><td></td></tr>
                   </thead>
                   <tbody>
-                    <tr><th><h3 id="BaseCurrency">a</h3></th>
-                      <th><h3 id="QuoteCurrency">what</h3></th>
-                      <th><h3 id="Date">the</h3></th>
-                      <th><h3 id="Time">time</h3></th>
-                      <th><h3 id="Bid">bid</h3></th>
-                      <th><h3 id="Mid">mid<h3></th>
-                      <th><h3 id="Ask">Ask</h3></th></tr>
+                    <tr><th><h3 id="BaseCurrency">N/A</h3></th>
+                      <th><h3 id="QuoteCurrency">N/A</h3></th>
+                      <th><h3 id="Date">N/A</h3></th>
+                      <th><h3 id="Time">N/A</h3></th>
+                      <th><h3 id="Bid">N/A</h3></th>
+                      <th><h3 id="Mid">N/A<h3></th>
+                      <th><h3 id="Ask">N/A</h3></th></tr>
                   </tbody>
                 </table>
               </div>
@@ -148,13 +150,10 @@
         <script> 
           var eventSource = null;
           var stocks = [];
-<<<<<<< HEAD
           var datas = [];
-          //$('#disconnect').on('click',disconnect);
-=======
->>>>>>> parent of 92e5c4d... update version 1.0
+
           window.onload = function connect() {
-            alert("page load finished"); 
+            //alert("page load finished"); 
             // REPLACE WITH YOUR OWN TOKEN HERE
             var appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
 
@@ -186,29 +185,50 @@
                // use json patch library to apply the patch (patch)
                // to the original snapshot (stocks)
                jsonpatch.apply(stocks, patch);
-               console.log('Received patch:!!!!!!' + JSON.stringify(patch));
+               //console.log('Received patch:!!!!!!' + JSON.stringify(patch));
                
+               checkNewDatas(patch);
+               cleanDatasNewTags();
                //$("#ajaxTest").html(JSON.stringify(patch));
              })
              .onError(function(error) {
                // displays the error message
                console.log(error.getMessage());
+               streamdata.close();
              });
 
             // open the data stream to the REST service through streamdata.io proxy
             eventSource.open();
 
           };
-          function constructDatasArray() {
-              var datasHeaders = Object.keys(datas[0]);
-              // delete areNew tags for render
-              if(datasHeaders.indexOf('areNew') != -1) datasHeaders.splice(datasHeaders.indexOf('areNew'), 1);
-              $('#datasArray').html(_.template($('#datasArrayTpl').html(),{datas: datas, datasHeaders: datasHeaders}));
+          function checkNewDatas(patch) {
+              // add areNew property to highlight changes
+              datas.map(function(item, index) {
+                  item.areNew = new Array();
+              });
+
+              patch.forEach(function(item) {
+                  var index = parseInt(item.path.substring(1, item.path.indexOf('/', 1)));
+                  var attribute = item.path.substring(item.path.indexOf('/', 1) + 2);
+                  var value = item.value;
+                  var tag = "#"+attribute;
+                  console.log("attribute is "+attribute+" value is "+value+" tag is "+tag);
+                  $(tag).effect("highlight");
+                  $(tag).html(value);
+
+              });
           }
-          // function disconnect(){
-          //   streamdata.close();
-          //   $('disconnect').val("Connect");
-          // }
+          function constructDatasArray() {
+            
+          }
+          function cleanDatasNewTags() {
+              datas.map(function(item, index) {
+                  delete item.areNew;
+              });
+          }
+          function disconnect(){
+            
+          }
         </script> 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
