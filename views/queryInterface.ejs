@@ -49,21 +49,19 @@
         <div class="wrapper"><!-- wrapper needed for scroll -->
           <!-- Top Navigation -->
           <div class="codrops-top clearfix">
-            <a class="codrops-icon codrops-icon-prev" href="#"><span>nav</span></a>
-            <span class="right"><a class="codrops-icon codrops-icon-drop" href="#">
-              <span>nav</span></a></span>
+            
           </div>
           <header class="codrops-header">
             <h1>Get Real time Rate  <span> 通过调用xignite XigniteGlobalCurrencies api实现汇率信息在网页上的动态显示</span></h1> 
           </header>
           <div class="main clearfix">
             <div class="column">
-              <p><button id="showMenu">Navigator</button></p>
+              <p><button id="disconnect">Disconnect</button></p>
               <p>Search</p>
                <div class="form-group">
                     <label for="inputUrl" class="col-sm-3 control-label">URL</label>
                     <div class="col-sm-8">
-                        <input id="inputUrl" class="form-control" placeholder="Your JSON API Url" type="url" value="http://demo-streamdataio.rhcloud.com/stockmarket/prices" required>
+                        <input id="inputUrl" class="form-control" placeholder="Your JSON API Url" type="url" value="http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=EURUSD&_token=0D3DA764DF454E38943049C8B967B5A3" required>
                     </div>
                 </div>
               <form id="ques1" action="/1" method="post" name="bbb">
@@ -151,7 +149,7 @@
           var eventSource = null;
           var stocks = [];
           var datas = [];
-
+          //$('#disconnect').on('click',disconnect);
           window.onload = function connect() {
             //alert("page load finished"); 
             // REPLACE WITH YOUR OWN TOKEN HERE
@@ -226,6 +224,10 @@
                   delete item.areNew;
               });
           }
+          // function disconnect(){
+          //   streamdata.close();
+          //   $('disconnect').val("Connect");
+          // }
         </script> 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
