@@ -100,15 +100,19 @@
                 <div id="table-scroll">
                 <table>
                   <thead>
-                  <tr><th>BaseCurrency</th><th> QuoteCurrency</th><th>Date</th><th>Time</th><th>Bid</th><th>Mid</th><th>Ask</th></tr>
+                  <tr><th>BaseCurrency</th><th>QuoteCurrency</th><th>Date</th><th>Time</th><th>Bid</th><th>Mid</th><th>Ask</th></tr>
                   <tr><td></td></tr>
                   </thead>
                   <tbody>
-                    <div id="ajaxTest"><h3>a</h3></div>
+                    <tr><th><h3 id="BaseCurrency">a</h3></th>
+                      <th><h3 id="QuoteCurrency">what</h3></th>
+                      <th><h3 id="Date">the</h3></th>
+                      <th><h3 id="Time">time</h3></th>
+                      <th><h3 id="Bid">bid</h3></th>
+                      <th><h3 id="Mid">mid<h3></th>
+                      <th><h3 id="Ask">Ask</h3></th></tr>
                   </tbody>
                 </table>
-
-               
               </div>
 
               
@@ -152,7 +156,7 @@
             var appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
 
             // create the StreamdataEventSource Object
-            eventSource = streamdataio.createEventSource("http://demo-streamdataio.rhcloud.com/stockmarket/prices",appToken);
+            eventSource = streamdataio.createEventSource("http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=EURUSD&_token=0D3DA764DF454E38943049C8B967B5A3",appToken);
 
             eventSource
              .onOpen(function() {
@@ -160,8 +164,18 @@
              })
              .onData(function(data) {
                // json object stored locally.
-               console.log('Received data: ***** ' + JSON.stringify(data));
-               stocks = data;
+               // console.log('Received data: ***** ' + JSON.stringify(data));
+               // stocks = data;
+               var rateObject = data;
+               console.log('Parsed JSON file ******'+rateObject.Outcome,rateObject.Bid);
+               $("#BaseCurrency").html(rateObject.BaseCurrency);
+               $("#QuoteCurrency").html(rateObject.QuoteCurrency);
+               $("#Date").html(rateObject.Date);
+               $("#Time").html(rateObject.Time);
+               $("#Bid").html(rateObject.Bid);
+               $("#Mid").html(rateObject.Mid);
+               $("#Ask").html(rateObject.Ask);
+
                //alert(JSON.stringify(data));
                constructDatasArray();
              })
@@ -170,7 +184,8 @@
                // to the original snapshot (stocks)
                jsonpatch.apply(stocks, patch);
                console.log('Received patch:!!!!!!' + JSON.stringify(patch));
-               $("#ajaxTest").html(JSON.stringify(patch));
+               
+               //$("#ajaxTest").html(JSON.stringify(patch));
              })
              .onError(function(error) {
                // displays the error message
