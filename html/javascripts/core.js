@@ -8,17 +8,19 @@
           //$(document).ready(function(){
             //$('#disconnect').on('click',disconnect());
             //alert("page load finished"); 
-            // REPLACE WITH YOUR OWN TOKEN HERE
             $("#connect").hide();
+
+            checkParameters();
+
+            
 
             var appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
             var URL = "http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=";
-            var moneyType = $("#").val();
-            var xigniteToken = $();
-
-            var source = URL+moneyType+xigniteToken;
+            
+            var xigniteToken = $('#inputToken').val();
+            //var source = URL+moneyType+xigniteToken;
             // create the StreamdataEventSource Object
-            eventSource = streamdataio.createEventSource("http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=EURUSD&_token=F9271E9EC6D5403BBBBB71E972852660",appToken);
+            eventSource = streamdataio.createEventSource("http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=EURUSD&_token=137CCDCDA864401D99359342F9CE158D  ",appToken);
 
             eventSource
              .onOpen(function() {
@@ -29,7 +31,7 @@
                // console.log('Received data: ***** ' + JSON.stringify(data));
                // stocks = data;
                var rateObject = data;
-               console.log('Parsed JSON file ******'+rateObject.Outcome,rateObject.Bid);
+               console.log('Parsed JSON file **##**'+rateObject.Outcome,rateObject.Bid);
                $("#BaseCurrency").html(rateObject.BaseCurrency);
                $("#QuoteCurrency").html(rateObject.QuoteCurrency);
                $("#Date").html(rateObject.Date);
@@ -79,6 +81,14 @@
 
               });
           }
+
+          function checkParameters(){
+              var appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
+              var URL = "http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=";
+              var xigniteToken = $('#inputToken').val();
+              console.log(xigniteToken);
+            }
+
           function constructDatasArray() {
             
           }
