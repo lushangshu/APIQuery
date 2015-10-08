@@ -107,9 +107,9 @@
               //xigniteToken = $('#inputToken').val();
               //baseCurrency = $('#SelectBaseCurrency').val();
               //quoteCurrency = $('#SelectQuoteCurrency').val();
-              xigniteToken = $('#inputToken').find('option:selected').text();
-              baseCurrency = $('.selectorB').val();
-              quoteCurrency = $('.selectorQ').find('option:selected').text();
+              xigniteToken = $('#inputToken').find('option:selected').val();
+              baseCurrency = $('#SelectBaseCurrency').val();
+              quoteCurrency = $('#SelectQuoteCurrency').val();
               source = URL + baseCurrency+quoteCurrency+'&_token='+xigniteToken;
 
               console.log("combined source url is : "+ source);
@@ -133,7 +133,8 @@
 
             eventSource.close();
             checkParameters();
-            eventSource.open();
+            alert("button pressed");
+            eventSource.open()
           }
 
           function connect(){
