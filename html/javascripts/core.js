@@ -1,29 +1,39 @@
 
-		  var eventSource = null;
+		      var eventSource = null;
           var stocks = [];
           var datas = [];
-          var eventSource = null;
+
+          var appToken = null;
+          var URL = null;
+          var xigniteToken = null;
+          var baseCurrency = null;
+          var quoteCurrency = null;
+          var source = null;
 
           window.onload = function connect() {
           //$(document).ready(function(){
             //$('#disconnect').on('click',disconnect());
-            //alert("page load finished"); 
+            
             $("#connect").hide();
+            $('#connect').on('click', connect);
+            $('#disconnect').on('click', disconnect);
+            $('#modify').on('click',modify);
 
+            //Check parameters first and try stream io connection
             checkParameters();
 
-            
-
-            var appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
-            var URL = "http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=";
+            //var appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
+            //URL = "http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=";
             
             var xigniteToken = $('#inputToken').val();
             //var source = URL+moneyType+xigniteToken;
             // create the StreamdataEventSource Object
-            eventSource = streamdataio.createEventSource("http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=EURUSD&_token=137CCDCDA864401D99359342F9CE158D  ",appToken);
-
+            //eventSource = streamdataio.createEventSource("http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=EURUSD&_token=137CCDCDA864401D99359342F9CE158D  ",appToken);
+            
+            eventSource = streamdataio.createEventSource(source,appToken);
             eventSource
-             .onOpen(function() {
+             .onOpen(function() { 
+
                console.log("streamdata Event Source connected.")
              })
              .onData(function(data) {
@@ -83,10 +93,14 @@
           }
 
           function checkParameters(){
-              var appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
-              var URL = "http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=";
-              var xigniteToken = $('#inputToken').val();
-              console.log(xigniteToken);
+              appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
+              URL = "http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=";
+              xigniteToken = $('#inputToken').val();
+              baseCurrency = $('#BaseCurrency').val();
+              quoteCurrency = $('#QuoteCurrency').val();
+              source = URL + baseCurrency+quoteCurrency+'&_token='+xigniteToken;
+
+              console.log("combined source url is : "+ source);
             }
 
           function constructDatasArray() {
@@ -103,7 +117,15 @@
             $('#connect').show();
             eventSource.close();
           }
+          function modify(){
+
+            eventSource.close();
+            checkParameters();
+            eventSource.open();
+          }
+
           function connect(){
+            checkParameters();
             $('#disconnect').show();
             $('#connect').hide();
             eventSource.open();
