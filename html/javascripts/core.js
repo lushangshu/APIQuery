@@ -2,6 +2,8 @@
 		      var eventSource = null;
           var stocks = [];
           var datas = [];
+          //set a limitation of the API request --- 5 times per token
+          var queryLimitation = 5;
 
           var appToken = null;
           var URL = null;
@@ -29,7 +31,7 @@
             //var source = URL+moneyType+xigniteToken;
             // create the StreamdataEventSource Object
             //eventSource = streamdataio.createEventSource("http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=EURUSD&_token=137CCDCDA864401D99359342F9CE158D  ",appToken);
-            
+
             eventSource = streamdataio.createEventSource(source,appToken);
             eventSource
              .onOpen(function() { 
@@ -56,12 +58,19 @@
              })
              .onPatch(function(patch) {
                // use json patch library to apply the patch (patch)
-               // to the original snapshot (stocks)
-               jsonpatch.apply(stocks, patch);
-               //console.log('Received patch:!!!!!!' + JSON.stringify(patch));
+               if(queryLimitation > 0){
+                  jsonpatch.apply(stocks, patch);
+                  //console.log('Received patch:!!!!!!' + JSON.stringify(patch));
+                  checkNewDatas(patch);
+                  cleanDatasNewTags();
+
+                  queryLimitation = queryLimitation - 1;
+               }
+               else{
+                alert("Request reached limitaion, please try another token ");
+                disconnect();
+               }
                
-               checkNewDatas(patch);
-               cleanDatasNewTags();
                //$("#ajaxTest").html(JSON.stringify(patch));
              })
              .onError(function(error) {
@@ -95,9 +104,12 @@
           function checkParameters(){
               appToken = "ZDI2NWVmZDgtZDYzNy00MDY1LWEyZDUtN2NjZjEwZmVjYTJj";
               URL = "http://globalcurrencies.xignite.com/xGlobalCurrencies.json/GetRealTimeRate?Symbol=";
-              xigniteToken = $('#inputToken').val();
-              baseCurrency = $('#BaseCurrency').val();
-              quoteCurrency = $('#QuoteCurrency').val();
+              //xigniteToken = $('#inputToken').val();
+              //baseCurrency = $('#SelectBaseCurrency').val();
+              //quoteCurrency = $('#SelectQuoteCurrency').val();
+              xigniteToken = $('#inputToken').find('option:selected').text();
+              baseCurrency = $('.selectorB').val();
+              quoteCurrency = $('.selectorQ').find('option:selected').text();
               source = URL + baseCurrency+quoteCurrency+'&_token='+xigniteToken;
 
               console.log("combined source url is : "+ source);
